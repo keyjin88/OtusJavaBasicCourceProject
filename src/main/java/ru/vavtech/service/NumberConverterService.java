@@ -51,7 +51,7 @@ public class NumberConverterService {
         var stringRepresentationOfNumber = new StringBuilder();
 
         if (inputNumber.getIntegerPart() == 0) {
-            stringRepresentationOfNumber.append(Number.ZERO.getExceptionalCase());
+            stringRepresentationOfNumber.append(Number.ZERO.getSingleValue());
         } else {
             convertNumberToString(inputNumber.getIntegerPart(), stringRepresentationOfNumber, Currency.CURRENCY);
         }
@@ -66,7 +66,7 @@ public class NumberConverterService {
      * @return - StringBuilder с результатом
      */
     private StringBuilder formStringBuilderOfPennyPart(InputNumber inputNumber) {
-        StringBuilder pennyToString = new StringBuilder();
+        var pennyToString = new StringBuilder();
         convertNumberToString(inputNumber.getConvertedDecimalPart(), pennyToString, Currency.PENNY);
         pennyToString.append(Currency.PENNY.getCurrencyValuesArray().get(inputNumber.getPennyIndex()));
         return pennyToString;
@@ -87,8 +87,8 @@ public class NumberConverterService {
      */
     private StringBuilder convertNumberToString(long number, StringBuilder stringRepresentationOfNumber, Currency currency) {
         while (number > 0) {
-            int partOfTheNumber = (int) (number % 1000);
-            String result = convertPartNumberToString(partOfTheNumber, currency);
+            var partOfTheNumber = (int) (number % 1000);
+            var result = convertPartNumberToString(partOfTheNumber, currency);
 
             if (dischargeRank > 0)
                 stringRepresentationOfNumber.insert(0,
@@ -110,10 +110,10 @@ public class NumberConverterService {
      * @return - результат в виде строки
      */
     private String convertPartNumberToString(int number, Currency currency) {
-        StringBuilder stringBuffer = new StringBuilder();
+        var stringBuffer = new StringBuilder();
         stringBuffer.append(Number.RANKS.getValuesArray().get(dischargeRank));
-        List<Integer> listOfNumbers = convertNumberToList(number);
-        int extraNumber = number % 100;
+        var listOfNumbers = convertNumberToList(number);
+        var extraNumber = number % 100;
         if (extraNumber > 10 && extraNumber < 20) {
             convertPartNumberToStringWithExtraNumber(listOfNumbers, stringBuffer);
         } else {
@@ -128,10 +128,10 @@ public class NumberConverterService {
      * @param stringBuffer  - буфер для записи результата
      */
     private void convertPartNumberToStringWithExtraNumber(List<Integer> listOfNumbers, StringBuilder stringBuffer) {
-        int index = listOfNumbers.get(0);
+        var index = listOfNumbers.get(0);
         stringBuffer.insert(0, Number.PRIME_FROM_11_TO_19.getValuesArray().get(index));
         if (listOfNumbers.size() > 2) {
-            int hundred = listOfNumbers.get(2);
+            var hundred = listOfNumbers.get(2);
             stringBuffer.insert(0, Number.PRIME_NUMBERS_DOZENS_AND_HUNDREDS.getTwoDimensionalValuesArray()[2][hundred]);
         }
         numbersRanksEndingsIndex = 2;
@@ -144,8 +144,8 @@ public class NumberConverterService {
      * @param stringBuffer - буфер для сохранения результата
      */
     private void convertPartNumberToStringWithStandardNumber(Currency currency, List<Integer> listONumbers, StringBuilder stringBuffer) {
-        for (int i = 0; i < listONumbers.size(); i++) {
-            int index = listONumbers.get(i);
+        for (var i = 0; i < listONumbers.size(); i++) {
+            var index = listONumbers.get(i);
             if (i == 0) {
                 switch (index) {
                     case 1 -> {
@@ -179,13 +179,11 @@ public class NumberConverterService {
      * @return - List из числа
      */
     private List<Integer> convertNumberToList(int number) {
-        List<Integer> listOfNumbers = new ArrayList<>(3);
+        var listOfNumbers = new ArrayList<Integer>(3);
         while (number != 0) {
             listOfNumbers.add(number % 10);
             number /= 10;
         }
         return listOfNumbers;
     }
-
-
 }

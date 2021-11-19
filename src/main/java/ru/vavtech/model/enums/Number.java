@@ -19,7 +19,7 @@ public enum Number {
 
     private List<String> valuesArray;
     private String[][] twoDimensionalValuesArray;
-    private String exceptionalCase;
+    private String singleValue;
 
     Number(List<String> numbers) {
         this.valuesArray = numbers;
@@ -29,8 +29,8 @@ public enum Number {
         this.twoDimensionalValuesArray = strings;
     }
 
-    Number(String exceptionalCase) {
-        this.exceptionalCase = exceptionalCase;
+    Number(String singleValue) {
+        this.singleValue = singleValue;
     }
 
     public List<String> getValuesArray() {
@@ -41,7 +41,7 @@ public enum Number {
         return twoDimensionalValuesArray;
     }
 
-    public String getExceptionalCase() {
-        return exceptionalCase;
+    public String getSingleValue() {
+        return singleValue;
     }
 }
