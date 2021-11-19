@@ -44,7 +44,7 @@ public class InputNumber {
 
     /**
      * Метод вычисляет индекс по которому будет строиться окончание валюты
-     * {@link Currency#CURRENCY}
+     * {@link Currency#RUBLES}
      * @return индекс элемента в массиве
      */
     public int getCurrencyIndex() {
@@ -53,7 +53,7 @@ public class InputNumber {
 
     /**
      * @return индекс с нужным склонением копеек
-     * {@link Currency#PENNY}
+     * {@link Currency#KOPEKS}
      */
     public int getPennyIndex() {
         return calculateIndex(getConvertedDecimalPart());

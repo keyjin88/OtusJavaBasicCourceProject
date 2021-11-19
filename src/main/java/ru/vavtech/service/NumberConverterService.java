@@ -51,9 +51,9 @@ public class NumberConverterService {
         if (inputNumber.getIntegerPart() == 0) {
             stringRepresentationOfNumber.append(ZERO);
         } else {
-            stringRepresentationOfNumber.append(convertNumberToString(inputNumber.getIntegerPart(), Currency.CURRENCY));
+            stringRepresentationOfNumber.append(convertNumberToString(inputNumber.getIntegerPart(), Currency.RUBLES));
         }
-        stringRepresentationOfNumber.append(Currency.CURRENCY.getCurrencyValuesArray().get(inputNumber.getCurrencyIndex()));
+        stringRepresentationOfNumber.append(Currency.RUBLES.getCurrencyValuesArray().get(inputNumber.getCurrencyIndex()));
 
         return stringRepresentationOfNumber;
     }
@@ -65,8 +65,8 @@ public class NumberConverterService {
      * @return - StringBuilder с результатом
      */
     private StringBuilder formStringBuilderOfPennyPart(long decimalPart, int pennyIndex) {
-        var pennyToString = convertNumberToString(decimalPart, Currency.PENNY);
-        pennyToString.append(Currency.PENNY.getCurrencyValuesArray().get(pennyIndex));
+        var pennyToString = convertNumberToString(decimalPart, Currency.KOPEKS);
+        pennyToString.append(Currency.KOPEKS.getCurrencyValuesArray().get(pennyIndex));
         return pennyToString;
     }
 

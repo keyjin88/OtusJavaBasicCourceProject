@@ -7,9 +7,9 @@ import java.util.List;
  * Хранит валюту и окончания простых чисел перед ней (од-ин и дв-а)
  */
 public enum Currency {
-    CURRENCY(List.of("рубль ", "рубля ", "рублей "),
+    RUBLES(List.of("рубль ", "рубля ", "рублей "),
             List.of("ин ", "а ")),
-    PENNY(List.of("копейка", "копейки", "копеек"),
+    KOPEKS(List.of("копейка", "копейки", "копеек"),
             List.of("на ", "е "));
 
     private final List<String> currencyValuesArray;
