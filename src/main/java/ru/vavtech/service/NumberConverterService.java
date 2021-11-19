@@ -11,13 +11,9 @@ import java.util.List;
  * Класс обрабатывает полученное число и приводит его к строке
  */
 public class NumberConverterService {
-    /**
-     * Индекс разряда числа
-     */
-    private int dischargeRank;
-    /**
-     * Индекс окончания числа в зависимости от разряда
-     */
+    /** Счетчик разрядов числа */
+    private int rankCounter;
+    /** Индекс окончания числа в зависимости от разряда */
     private int numbersRanksEndingsIndex;
 
     /**
@@ -33,7 +29,8 @@ public class NumberConverterService {
 
         if (inputNumber.getDecimalPartLength() > 0) {
             numberToString.append("и ");
-            numberToString.append(formStringBuilderOfPennyPart(inputNumber));
+            numberToString.append(formStringBuilderOfPennyPart(inputNumber.getConvertedDecimalPart(),
+                    inputNumber.getPennyIndex()));
         }
         if (!inputNumber.isPositiveNumber()) {
             numberToString.insert(0, "минус ");
@@ -53,7 +50,7 @@ public class NumberConverterService {
         if (inputNumber.getIntegerPart() == 0) {
             stringRepresentationOfNumber.append(Number.ZERO.getSingleValue());
         } else {
-            convertNumberToString(inputNumber.getIntegerPart(), stringRepresentationOfNumber, Currency.CURRENCY);
+            stringRepresentationOfNumber.append(convertNumberToString(inputNumber.getIntegerPart(), Currency.CURRENCY));
         }
         stringRepresentationOfNumber.append(Currency.CURRENCY.getCurrencyValuesArray().get(inputNumber.getCurrencyIndex()));
 
@@ -62,13 +59,13 @@ public class NumberConverterService {
 
     /**
      * Формирует строковое представление дробной части числа (копейки)
-     * @param inputNumber - класс хранящий полученное число
+     * @param decimalPart - преобразованная к целому числу десятичная часть
+     * @param pennyIndex  - индекс десятичной части для правильного формирования строки
      * @return - StringBuilder с результатом
      */
-    private StringBuilder formStringBuilderOfPennyPart(InputNumber inputNumber) {
-        var pennyToString = new StringBuilder();
-        convertNumberToString(inputNumber.getConvertedDecimalPart(), pennyToString, Currency.PENNY);
-        pennyToString.append(Currency.PENNY.getCurrencyValuesArray().get(inputNumber.getPennyIndex()));
+    private StringBuilder formStringBuilderOfPennyPart(long decimalPart, int pennyIndex) {
+        var pennyToString = convertNumberToString(decimalPart, Currency.PENNY);
+        pennyToString.append(Currency.PENNY.getCurrencyValuesArray().get(pennyIndex));
         return pennyToString;
     }
 
@@ -81,26 +78,26 @@ public class NumberConverterService {
 
     /**
      * Конвертирует число в строку (добавляет окончания, считает индекс разрядов числа)
-     * @param number                       - число которое необходимо конвертировать в строку
-     * @param stringRepresentationOfNumber - StringBuilder для сохранения результата преобразования
-     * @param currency                     - валюта с которой нужно выполнять конвертацию
+     * @param number   - число которое необходимо конвертировать в строку
+     * @param currency - валюта с которой нужно выполнять конвертацию
      */
-    private StringBuilder convertNumberToString(long number, StringBuilder stringRepresentationOfNumber, Currency currency) {
+    private StringBuilder convertNumberToString(long number, Currency currency) {
+        StringBuilder sb = new StringBuilder();
         while (number > 0) {
             var partOfTheNumber = (int) (number % 1000);
             var result = convertPartNumberToString(partOfTheNumber, currency);
 
-            if (dischargeRank > 0)
-                stringRepresentationOfNumber.insert(0,
-                        result + Number.RANKS_ENDINGS.getTwoDimensionalValuesArray()[Math.min(dischargeRank, 2)][numbersRanksEndingsIndex]);
+            if (rankCounter > 0)
+                sb.insert(0,
+                        result + Number.RANKS_ENDINGS.getTwoDimensionalValuesArray()[Math.min(rankCounter, 2)][numbersRanksEndingsIndex]);
             else
-                stringRepresentationOfNumber.insert(0, result);
+                sb.insert(0, result);
 
             number /= 1000;
-            dischargeRank++;
+            rankCounter++;
         }
-        dischargeRank = 0;
-        return stringRepresentationOfNumber;
+        rankCounter = 0;
+        return sb;
     }
 
     /**
@@ -111,7 +108,7 @@ public class NumberConverterService {
      */
     private String convertPartNumberToString(int number, Currency currency) {
         var stringBuffer = new StringBuilder();
-        stringBuffer.append(Number.RANKS.getValuesArray().get(dischargeRank));
+        stringBuffer.append(Number.RANKS.getValuesArray().get(rankCounter));
         var listOfNumbers = convertNumberToList(number);
         var extraNumber = number % 100;
         if (extraNumber > 10 && extraNumber < 20) {
@@ -150,12 +147,12 @@ public class NumberConverterService {
                 switch (index) {
                     case 1 -> {
                         stringBuffer.insert(0, Number.PRIME_NUMBERS_DOZENS_AND_HUNDREDS.getTwoDimensionalValuesArray()[i][index]);
-                        stringBuffer.insert(2, dischargeRank == 1 ? Number.RANKS_ENDINGS.getTwoDimensionalValuesArray()[i][0] : currency.getPrimeNumbersEndings().get(0));
+                        stringBuffer.insert(2, rankCounter == 1 ? Number.RANKS_ENDINGS.getTwoDimensionalValuesArray()[i][0] : currency.getPrimeNumbersEndings().get(0));
                         numbersRanksEndingsIndex = 0;
                     }
                     case 2 -> {
                         stringBuffer.insert(0, Number.PRIME_NUMBERS_DOZENS_AND_HUNDREDS.getTwoDimensionalValuesArray()[i][index]);
-                        stringBuffer.insert(2, dischargeRank == 1 ? Number.RANKS_ENDINGS.getTwoDimensionalValuesArray()[i][1] : currency.getPrimeNumbersEndings().get(1));
+                        stringBuffer.insert(2, rankCounter == 1 ? Number.RANKS_ENDINGS.getTwoDimensionalValuesArray()[i][1] : currency.getPrimeNumbersEndings().get(1));
                         numbersRanksEndingsIndex = 1;
                     }
                     case 3, 4 -> {
