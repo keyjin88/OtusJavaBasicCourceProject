@@ -3,6 +3,7 @@ package ru.vavtech.service;
 import ru.vavtech.model.InputNumber;
 import ru.vavtech.model.enums.Currency;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,21 +18,24 @@ public class NumberConverterService {
     /** Индекс окончания числа в зависимости от разряда */
     private int numbersRanksEndingsIndex;
 
+    private final InputNumberService inputNumberService = new InputNumberServiceImpl();
+
     /**
      * Конвертирует число в строку (финальный метод, собирает в одну строку результаты преобразований остальных методов)
-     * @param inputNumber - класс хранящий полученное число
+     * @param number - введенное число
      * @return - строку с результатом преобразования
      */
-    public String convertNumberToString(InputNumber inputNumber) {
+    public String convertNumberToString(BigDecimal number) {
+        var inputNumber = inputNumberService.convertToInputNumber(number);
         if (!isInputNumberInAcceptableRange(inputNumber))
             return "Введенное число выходит за допустимый диапазон";
 
         StringBuilder numberToString = formStringBuilderOfCurrencyPart(inputNumber);
 
-        if (inputNumber.getDecimalPartLength() > 0) {
+        if (inputNumberService.getDecimalPartLength(inputNumber) > 0) {
             numberToString.append("и ");
-            numberToString.append(formStringBuilderOfPennyPart(inputNumber.getConvertedDecimalPart(),
-                    inputNumber.getPennyIndex()));
+            numberToString.append(formStringBuilderOfPennyPart(inputNumberService.getConvertedDecimalPart(inputNumber),
+                    inputNumberService.getPennyIndex(inputNumber)));
         }
         if (!inputNumber.isPositiveNumber()) {
             numberToString.insert(0, "минус ");
@@ -53,7 +57,7 @@ public class NumberConverterService {
         } else {
             stringRepresentationOfNumber.append(convertNumberToString(inputNumber.getIntegerPart(), Currency.RUBLES));
         }
-        stringRepresentationOfNumber.append(Currency.RUBLES.getCurrencyValuesArray().get(inputNumber.getCurrencyIndex()));
+        stringRepresentationOfNumber.append(Currency.RUBLES.getCurrencyValuesArray().get(inputNumberService.getCurrencyIndex(inputNumber)));
 
         return stringRepresentationOfNumber;
     }
@@ -74,7 +78,7 @@ public class NumberConverterService {
      * Определяет допустимую длину числа для преобразования
      */
     private boolean isInputNumberInAcceptableRange(InputNumber inputNumber) {
-        return inputNumber.getNumberLength() <= 15 && inputNumber.getDecimalPartLength() <= 2;
+        return inputNumberService.getNumberLength(inputNumber) <= 15 && inputNumberService.getDecimalPartLength(inputNumber) <= 2;
     }
 
     /**
